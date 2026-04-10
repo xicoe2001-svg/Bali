@@ -43,11 +43,9 @@ html, body {
 
 h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 
-/* SCREENS */
 .screen { display:none; height:calc(100vh - var(--nav-height)); overflow-y:auto; scroll-behavior:smooth; }
 .screen.active { display:block; }
 
-/* NAVBAR */
 .navbar {
   position:fixed; bottom:0; left:0; right:0; height:var(--nav-height);
   background: var(--white);
@@ -71,7 +69,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   width:24px; height:3px; background:var(--emerald); border-radius:0 0 4px 4px;
 }
 
-/* HOME SCREEN */
 .home-screen { position:relative; overflow:hidden; }
 .home-hero {
   min-height: calc(100vh - var(--nav-height));
@@ -128,7 +125,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   padding:5px 12px; border-radius:20px; font-weight:500; letter-spacing:0.5px;
 }
 
-/* MAP SCREEN */
 #map-container { height:calc(100vh - var(--nav-height)); width:100%; position:relative; }
 #map { height:100%; width:100%; }
 .leaflet-popup-content-wrapper { border-radius:var(--radius-sm)!important; box-shadow:var(--shadow-lg)!important; }
@@ -152,7 +148,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 .legend-item { display:flex; align-items:center; gap:5px; }
 .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 
-/* ITINERARY SCREEN */
 .itinerary-screen { padding:20px 16px calc(var(--nav-height) + 20px); }
 .itin-header {
   text-align:center; margin-bottom:24px; padding:20px;
@@ -200,7 +195,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   font-size:11px; font-weight:600; text-decoration:none; cursor:pointer;
 }
 
-/* CHECKLIST SCREEN */
 .checklist-screen { padding:20px 16px calc(var(--nav-height) + 20px); }
 .check-header {
   text-align:center; margin-bottom:20px; padding:20px;
@@ -241,7 +235,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 .check-item.done .check-box { background:var(--emerald); border-color:var(--emerald); color:white; }
 .check-item.done .check-text { text-decoration:line-through; color:var(--text-light); }
 
-/* EMERGENCY SCREEN */
 .emergency-screen { padding:20px 16px calc(var(--nav-height) + 20px); }
 .emerg-header {
   text-align:center; margin-bottom:20px; padding:20px;
@@ -261,18 +254,11 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 .emerg-info h4 { font-size:15px; margin-bottom:4px; }
 .emerg-info p { font-size:13px; color:var(--text-mid); line-height:1.5; }
 .emerg-info a { color:var(--emerald); font-weight:600; text-decoration:none; }
-.emerg-tip {
-  background:var(--sand); border-radius:var(--radius-sm); padding:14px;
-  margin-bottom:10px; font-size:13px; color:var(--text-mid); line-height:1.6;
-}
-.emerg-tip strong { color:var(--text-dark); }
 
-/* Scroll styling */
 .screen::-webkit-scrollbar { width:4px; }
 .screen::-webkit-scrollbar-track { background:transparent; }
 .screen::-webkit-scrollbar-thumb { background:var(--beige-dark); border-radius:4px; }
 
-/* Animations */
 @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 .fade-up { animation:fadeUp .6s ease forwards; }
 .fade-up-d1 { animation-delay:.1s; opacity:0; }
@@ -283,7 +269,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 </head>
 <body>
 
-<!-- HOME -->
 <div id="screen-home" class="screen home-screen active">
   <div class="home-hero">
     <div class="home-ornament fade-up">✦ Aventura ✦</div>
@@ -296,7 +281,7 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
       <div class="countdown-item"><div class="countdown-num" id="cd-secs">--</div><div class="countdown-label">Seg</div></div>
     </div>
     <div class="home-dates fade-up fade-up-d4">
-      <i class="fa-solid fa-plane-departure"></i> 15 Abril — 29 Abril · 15 días
+      <i class="fa-solid fa-plane-departure"></i> 16 Abril — 29 Abril · 14 días
     </div>
     <div class="home-route fade-up fade-up-d4">
       <span>Canggu</span><span>Ubud</span><span>Nusa</span><span>Gili T</span><span>Uluwatu</span>
@@ -304,7 +289,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   </div>
 </div>
 
-<!-- MAP -->
 <div id="screen-map" class="screen">
   <div id="map-container">
     <div id="map"></div>
@@ -312,16 +296,14 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   </div>
 </div>
 
-<!-- ITINERARY -->
 <div id="screen-itinerary" class="screen itinerary-screen">
   <div class="itin-header">
     <h2>Itinerario</h2>
-    <p>15 días · 5 bases · Infinitas aventuras</p>
+    <p>14 días · 5 bases · Infinitas aventuras</p>
   </div>
   <div id="itin-list"></div>
 </div>
 
-<!-- CHECKLIST -->
 <div id="screen-checklist" class="screen checklist-screen">
   <div class="check-header">
     <h2>Checklist</h2>
@@ -332,7 +314,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   <div id="check-list"></div>
 </div>
 
-<!-- EMERGENCIES -->
 <div id="screen-emergency" class="screen emergency-screen">
   <div class="emerg-header">
     <h2>Emergencias</h2>
@@ -341,7 +322,6 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
   <div id="emerg-list"></div>
 </div>
 
-<!-- NAVBAR -->
 <nav class="navbar">
   <div class="nav-item active" data-screen="home"><i class="fa-solid fa-house"></i><span>Inicio</span></div>
   <div class="nav-item" data-screen="map"><i class="fa-solid fa-map-location-dot"></i><span>Mapa</span></div>
@@ -351,11 +331,10 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 </nav>
 
 <script>
-// ====================== DATA ======================
-const TRIP_START = new Date('2026-04-15T00:00:00');
+const TRIP_START = new Date('2026-04-16T00:00:00');
 
 const ZONES = [
-  { id:'canggu', name:'Canggu', color:'#2D6A4F', dates:'16–19 Abr', lat:-8.6478, lng:115.1385 },
+  { id:'canggu', name:'Canggu', color:'#2D6A4F', dates:'17–19 Abr', lat:-8.6478, lng:115.1385 },
   { id:'ubud', name:'Ubud', color:'#7B2D8B', dates:'20 Abr', lat:-8.5069, lng:115.2625 },
   { id:'nusa', name:'Nusa Penida', color:'#C0392B', dates:'21–22 Abr', lat:-8.7275, lng:115.5444 },
   { id:'gili', name:'Gili Trawangan', color:'#2980B9', dates:'23–25 Abr', lat:-8.3510, lng:116.0345 },
@@ -364,14 +343,12 @@ const ZONES = [
 
 const DAYS = [
   {
-    day:1, date:'15 Abr', weekday:'Miércoles', zone:'travel', title:'Vuelo a Bali',
+    day:1, date:'16 Abr', weekday:'Jueves', zone:'travel', title:'Vuelo a Bali',
     color:'#6C757D',
-    slots: {
-      manana: ['Vuelo de 18 horas ✈️ ¡Empieza la aventura!'],
-    }
+    slots: { manana: ['Vuelo de 18 horas ✈️ ¡Empieza la aventura!'] }
   },
   {
-    day:2, date:'16 Abr', weekday:'Jueves', zone:'canggu', title:'Llegada a Canggu',
+    day:2, date:'17 Abr', weekday:'Viernes', zone:'canggu', title:'Llegada a Canggu',
     color:'#2D6A4F',
     slots: {
       manana: ['Check-in + dejar maletas en el alojamiento'],
@@ -381,26 +358,16 @@ const DAYS = [
     }
   },
   {
-    day:3, date:'17 Abr', weekday:'Viernes', zone:'canggu', title:'Playas Canggu',
+    day:3, date:'18 Abr', weekday:'Sábado', zone:'canggu', title:'Playas + CUBO',
     color:'#2D6A4F',
     slots: {
-      manana: ['Pererenan Beach → más chill y bonita', 'Seseh Beach → aún más tranquila'],
-      tarde: ['Volver al hotel/piscina + ducha', 'Volved a Batu Bolong al atardecer (más ambiente)'],
+      manana: ['Pererenan Beach → más chill y bonita\nSeseh Beach → aún más tranquila'],
+      tarde: ['CUBO (gigante, espectáculo)\nId temprano para pillar buen sitio y ver el sunset desde piscina/mar'],
       noche: ['FIESTUKI 🎉'],
     }
   },
   {
-    day:4, date:'18 Abr', weekday:'Sábado', zone:'canggu', title:'Berawa + CUBO',
-    color:'#2D6A4F',
-    slots: {
-      manana: ['TRANKI IN THE MORNING ☕'],
-      mediodia: ['Berawa Beach'],
-      tarde: ['CUBO (gigante, espectáculo)\nId temprano para pillar buen sitio y ver el sunset desde piscina/mar'],
-      noche: ['Cena cerca y decidimos'],
-    }
-  },
-  {
-    day:5, date:'19 Abr', weekday:'Domingo', zone:'canggu', title:'Tanah Lot Sunset',
+    day:4, date:'19 Abr', weekday:'Domingo', zone:'canggu', title:'Tanah Lot Sunset',
     color:'#2D6A4F',
     slots: {
       manana: ['Playa Pererenan o Seseh'],
@@ -410,7 +377,7 @@ const DAYS = [
     }
   },
   {
-    day:6, date:'20 Abr', weekday:'Lunes', zone:'ubud', title:'Ubud: Quads + Cascadas',
+    day:5, date:'20 Abr', weekday:'Lunes', zone:'ubud', title:'Ubud: Quads + Cascadas',
     color:'#7B2D8B',
     slots: {
       manana: ['SALIR MUY PRONTO 07:30–08:00\n10:00–10:30 Ruta en quad por barro, túneles y arrozales\nComida y ducha incluidas'],
@@ -419,7 +386,7 @@ const DAYS = [
     }
   },
   {
-    day:7, date:'21 Abr', weekday:'Martes', zone:'nusa', title:'Nusa Penida — Llegada',
+    day:6, date:'21 Abr', weekday:'Martes', zone:'nusa', title:'Nusa Penida — Llegada',
     color:'#C0392B',
     slots: {
       manana: ['06:30 Despertar\n07:00 Salida de Ubud → Puerto de Sanur (driver)\n08:00–08:30 Llegada al puerto\n09:00 Fast boat a Nusa\n09:30–10:15 Llegada a Nusa'],
@@ -429,7 +396,7 @@ const DAYS = [
     }
   },
   {
-    day:8, date:'22 Abr', weekday:'Miércoles', zone:'nusa', title:'Nusa Penida — Ruta Este',
+    day:7, date:'22 Abr', weekday:'Miércoles', zone:'nusa', title:'Nusa Penida — Ruta Este',
     color:'#C0392B',
     slots: {
       manana: ['07:00 Salida con driver\n08:00–11:30 Ruta Este:\n• Diamond Beach\n• Atuh Beach\n• Mirador Thousand Islands'],
@@ -439,7 +406,7 @@ const DAYS = [
     }
   },
   {
-    day:9, date:'23 Abr', weekday:'Jueves', zone:'gili', title:'Gili Trawangan — Llegada',
+    day:8, date:'23 Abr', weekday:'Jueves', zone:'gili', title:'Gili Trawangan — Llegada',
     color:'#2980B9',
     slots: {
       manana: ['06:30 despertar + desayuno rápido\n07:15 salir del hotel → puerto (Nusa)\n08:00–08:30 estar en el puerto\nBarco mañana → Nusa → Gili T'],
@@ -449,7 +416,7 @@ const DAYS = [
     }
   },
   {
-    day:10, date:'24 Abr', weekday:'Viernes', zone:'gili', title:'Gili — Snorkel + Explore',
+    day:9, date:'24 Abr', weekday:'Viernes', zone:'gili', title:'Gili — Snorkel + Explore',
     color:'#2980B9',
     slots: {
       manana: ['09:30–13:00 Tour snorkel (barco compartido)\n🐢 RESERVAR: Turtle Point'],
@@ -459,7 +426,7 @@ const DAYS = [
     }
   },
   {
-    day:11, date:'25 Abr', weekday:'Sábado', zone:'gili', title:'Gili — Último día relax',
+    day:10, date:'25 Abr', weekday:'Sábado', zone:'gili', title:'Gili — Último día relax',
     color:'#2980B9',
     slots: {
       manana: ['South / South-East: coged bici hacia abajo, más vacío y tranquilo\nSnorkel desde orilla por zona norte; paz total por el sur'],
@@ -468,7 +435,7 @@ const DAYS = [
     }
   },
   {
-    day:12, date:'26 Abr', weekday:'Domingo', zone:'uluwatu', title:'Uluwatu — Llegada',
+    day:11, date:'26 Abr', weekday:'Domingo', zone:'uluwatu', title:'Uluwatu — Llegada',
     color:'#D4A017',
     slots: {
       manana: ['07:30–08:00 Fast boat desde Gili\n11:00–13:00 Llegada a Bali + driver a Padang Padang/Pecatu'],
@@ -478,7 +445,7 @@ const DAYS = [
     }
   },
   {
-    day:13, date:'27 Abr', weekday:'Lunes', zone:'uluwatu', title:'Bingin + Balangan',
+    day:12, date:'27 Abr', weekday:'Lunes', zone:'uluwatu', title:'Bingin + Balangan',
     color:'#D4A017',
     slots: {
       manana: ['08:30 Salida\n09:00–11:30 Bingin Beach\nVibe brutal, muy Uluwatu. Bajad con calma (escaleras)'],
@@ -488,7 +455,7 @@ const DAYS = [
     }
   },
   {
-    day:14, date:'28 Abr', weekday:'Martes', zone:'uluwatu', title:'Uluwatu Temple + Kecak',
+    day:13, date:'28 Abr', weekday:'Martes', zone:'uluwatu', title:'Uluwatu Temple + Kecak',
     color:'#D4A017',
     slots: {
       manana: ['09:00–11:30 Suluban Beach (Blue Point)\nCuevas/rocas, súper chula'],
@@ -498,11 +465,9 @@ const DAYS = [
     }
   },
   {
-    day:15, date:'29 Abr', weekday:'Miércoles', zone:'travel', title:'Vuelta a casa',
+    day:14, date:'29 Abr', weekday:'Miércoles', zone:'travel', title:'Vuelta a casa',
     color:'#6C757D',
-    slots: {
-      manana: ['SALIDA ✈️ Hasta la próxima, Bali 🌺'],
-    }
+    slots: { manana: ['Vuelo de vuelta ✈️ Hasta la próxima, Bali 🌺'] }
   },
 ];
 
@@ -511,7 +476,6 @@ const MARKERS = [
   { name:'Nelayan Beach', zone:'canggu', lat:-8.6536, lng:115.1279, desc:'Playa más tranquila a 5 min de Batu Bolong' },
   { name:'Pererenan Beach', zone:'canggu', lat:-8.6530, lng:115.1110, desc:'Más chill y bonita que Batu Bolong' },
   { name:'Seseh Beach', zone:'canggu', lat:-8.6300, lng:115.0900, desc:'Aún más tranquila, relax total' },
-  { name:'Berawa Beach', zone:'canggu', lat:-8.6610, lng:115.1430, desc:'Playa con buenas olas y ambiente' },
   { name:'Old Man\'s', zone:'canggu', lat:-8.6548, lng:115.1321, desc:'Bar clásico social frente al mar' },
   { name:'CUBO Canggu', zone:'canggu', lat:-8.6570, lng:115.1340, desc:'Beach club gigante, espectáculo de sunset' },
   { name:'Tanah Lot', zone:'canggu', lat:-8.6210, lng:115.0868, desc:'Templo icónico en el mar. Sunset brutal' },
@@ -553,11 +517,9 @@ const EMERGENCY = [
   {icon:'fa-triangle-exclamation', color:'#E67E22', bg:'#FDF2E9', title:'Tips de seguridad', text:'Cuidado con los monos en Uluwatu (gafas, móvil).\nNo beber agua del grifo.\nRegatear con humor (empezar 30-40% del precio).\nLlevar cash pequeño para propinas.\nGuardar copias digitales de todo en la nube.'},
 ];
 
-// ====================== APP LOGIC ======================
 let map = null;
 let mapInitialized = false;
 
-// Navigation
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     const screen = item.dataset.screen;
@@ -570,7 +532,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
   });
 });
 
-// Countdown
 function updateCountdown() {
   const now = new Date();
   const diff = TRIP_START - now;
@@ -581,19 +542,14 @@ function updateCountdown() {
     document.getElementById('cd-secs').textContent = '🔥';
     return;
   }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('cd-days').textContent = d;
-  document.getElementById('cd-hours').textContent = h;
-  document.getElementById('cd-mins').textContent = m;
-  document.getElementById('cd-secs').textContent = s;
+  document.getElementById('cd-days').textContent = Math.floor(diff / 86400000);
+  document.getElementById('cd-hours').textContent = Math.floor((diff % 86400000) / 3600000);
+  document.getElementById('cd-mins').textContent = Math.floor((diff % 3600000) / 60000);
+  document.getElementById('cd-secs').textContent = Math.floor((diff % 60000) / 1000);
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-// Map
 function initMap() {
   map = L.map('map', { zoomControl: false }).setView([-8.65, 115.35], 10);
   L.control.zoom({ position: 'topright' }).addTo(map);
@@ -603,17 +559,13 @@ function initMap() {
 
   const zoneColors = {};
   ZONES.forEach(z => zoneColors[z.id] = z.color);
-  zoneColors['travel'] = '#6C757D';
 
   MARKERS.forEach(m => {
     const color = zoneColors[m.zone] || '#333';
     const icon = L.divIcon({
       className: '',
-      html: `<div style="width:28px;height:28px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
-        <div style="width:8px;height:8px;background:white;border-radius:50%;"></div>
-      </div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
+      html: `<div style="width:28px;height:28px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><div style="width:8px;height:8px;background:white;border-radius:50%;"></div></div>`,
+      iconSize: [28, 28], iconAnchor: [14, 14],
     });
     const marker = L.marker([m.lat, m.lng], { icon }).addTo(map);
     const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}`;
@@ -625,7 +577,6 @@ function initMap() {
     `, { maxWidth: 260 });
   });
 
-  // Legend
   const legend = document.getElementById('map-legend');
   ZONES.forEach(z => {
     legend.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${z.color}"></div>${z.name}</div>`;
@@ -633,7 +584,6 @@ function initMap() {
   mapInitialized = true;
 }
 
-// Navigate to map marker
 function showOnMap(lat, lng) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -643,19 +593,15 @@ function showOnMap(lat, lng) {
   setTimeout(() => {
     map.invalidateSize();
     map.setView([lat, lng], 15);
-    // Open closest marker popup
     map.eachLayer(layer => {
       if (layer instanceof L.Marker) {
         const ll = layer.getLatLng();
-        if (Math.abs(ll.lat - lat) < 0.005 && Math.abs(ll.lng - lng) < 0.005) {
-          layer.openPopup();
-        }
+        if (Math.abs(ll.lat - lat) < 0.005 && Math.abs(ll.lng - lng) < 0.005) layer.openPopup();
       }
     });
   }, 150);
 }
 
-// Itinerary
 function buildItinerary() {
   const container = document.getElementById('itin-list');
   const timeIcons = { manana:'fa-sun', mediodia:'fa-cloud-sun', tarde:'fa-moon', noche:'fa-star' };
@@ -667,10 +613,7 @@ function buildItinerary() {
     card.innerHTML = `
       <div class="day-card-header">
         <div class="day-num" style="background:${day.color}">${day.day}</div>
-        <div class="day-info">
-          <h3>${day.title}</h3>
-          <p>${day.weekday} ${day.date}</p>
-        </div>
+        <div class="day-info"><h3>${day.title}</h3><p>${day.weekday} ${day.date}</p></div>
         <i class="fa-solid fa-chevron-down day-chevron"></i>
       </div>
       <div class="day-content">
@@ -678,7 +621,6 @@ function buildItinerary() {
           <div class="time-block">
             <div class="time-label"><i class="fa-solid ${timeIcons[slot]}"></i> ${timeLabels[slot]}</div>
             ${activities.map(act => {
-              // Find matching marker for nav button
               let navBtn = '';
               MARKERS.forEach(m => {
                 const words = m.name.toLowerCase().split(/[\s()]+/);
@@ -695,15 +637,12 @@ function buildItinerary() {
         `).join('')}
       </div>
     `;
-    card.querySelector('.day-card-header').addEventListener('click', () => {
-      card.classList.toggle('open');
-    });
+    card.querySelector('.day-card-header').addEventListener('click', () => card.classList.toggle('open'));
     container.appendChild(card);
   });
 }
 buildItinerary();
 
-// Checklist
 function buildChecklist() {
   const container = document.getElementById('check-list');
   const saved = JSON.parse(localStorage.getItem('bali-checklist') || '{}');
@@ -713,8 +652,7 @@ function buildChecklist() {
     section.className = 'check-category';
     section.innerHTML = `
       <div class="check-cat-header">
-        <i class="fa-solid ${data.icon}"></i>
-        <span>${cat}</span>
+        <i class="fa-solid ${data.icon}"></i><span>${cat}</span>
         <span class="cat-count">${data.items.length}</span>
         <i class="fa-solid fa-chevron-down cat-chevron"></i>
       </div>
@@ -729,15 +667,12 @@ function buildChecklist() {
         }).join('')}
       </div>
     `;
-    section.querySelector('.check-cat-header').addEventListener('click', () => {
-      section.classList.toggle('open');
-    });
+    section.querySelector('.check-cat-header').addEventListener('click', () => section.classList.toggle('open'));
     section.querySelectorAll('.check-item').forEach(item => {
       item.addEventListener('click', () => {
         item.classList.toggle('done');
-        const key = item.dataset.key;
         const state = JSON.parse(localStorage.getItem('bali-checklist') || '{}');
-        state[key] = item.classList.contains('done');
+        state[item.dataset.key] = item.classList.contains('done');
         localStorage.setItem('bali-checklist', JSON.stringify(state));
         updateProgress();
       });
@@ -756,17 +691,13 @@ function updateProgress() {
 }
 buildChecklist();
 
-// Emergency
 function buildEmergency() {
   const container = document.getElementById('emerg-list');
   EMERGENCY.forEach(e => {
     container.innerHTML += `
       <div class="emerg-card">
         <div class="emerg-icon" style="background:${e.bg};color:${e.color}"><i class="fa-solid ${e.icon}"></i></div>
-        <div class="emerg-info">
-          <h4>${e.title}</h4>
-          <p>${e.text.replace(/\n/g,'<br>')}</p>
-        </div>
+        <div class="emerg-info"><h4>${e.title}</h4><p>${e.text.replace(/\n/g,'<br>')}</p></div>
       </div>
     `;
   });
