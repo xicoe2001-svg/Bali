@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Bali 2026 — Martí & Hugo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --emerald: #2D6A4F;
+  --emerald-light: #40916C;
+  --emerald-dark: #1B4332;
+  --gold: #D4A574;
+  --gold-light: #E8C9A0;
+  --beige: #FAF3E8;
+  --beige-dark: #F0E6D4;
+  --sand: #F5ECD7;
+  --text-dark: #2C2416;
+  --text-mid: #5C4A32;
+  --text-light: #8B7355;
+  --white: #FFFFFF;
+  --shadow: 0 2px 12px rgba(44,36,22,0.08);
+  --shadow-lg: 0 8px 32px rgba(44,36,22,0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-height: 72px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--beige);
+  color: var(--text-dark);
+  height: 100%;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+/* SCREENS */
+.screen { display:none; height:calc(100vh - var(--nav-height)); overflow-y:auto; scroll-behavior:smooth; }
+.screen.active { display:block; }
+
+/* NAVBAR */
+.navbar {
+  position:fixed; bottom:0; left:0; right:0; height:var(--nav-height);
+  background: var(--white);
+  border-top: 1px solid var(--beige-dark);
+  display:flex; justify-content:space-around; align-items:center;
+  z-index:1000;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -4px 20px rgba(44,36,22,0.06);
+}
+.nav-item {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-size:10px; font-weight:500; color:var(--text-light);
+  cursor:pointer; transition:all .2s; padding:6px 12px;
+  border-radius:12px; position:relative;
+}
+.nav-item i { font-size:20px; transition:all .2s; }
+.nav-item.active { color:var(--emerald); }
+.nav-item.active i { transform:scale(1.1); }
+.nav-item.active::before {
+  content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+  width:24px; height:3px; background:var(--emerald); border-radius:0 0 4px 4px;
+}
+
+/* HOME SCREEN */
+.home-screen { position:relative; overflow:hidden; }
+.home-hero {
+  min-height: calc(100vh - var(--nav-height));
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:40px 24px;
+  background: linear-gradient(170deg, var(--beige) 0%, var(--sand) 40%, var(--beige-dark) 100%);
+  position:relative;
+}
+.home-hero::before {
+  content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+  background: radial-gradient(ellipse at 30% 20%, rgba(45,106,79,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 80%, rgba(212,165,116,0.1) 0%, transparent 50%);
+}
+.home-hero > * { position:relative; z-index:1; }
+.home-ornament {
+  font-size:14px; letter-spacing:6px; color:var(--gold); text-transform:uppercase;
+  font-weight:500; margin-bottom:12px;
+}
+.home-title {
+  font-size:clamp(48px,12vw,72px); font-weight:700; color:var(--emerald-dark);
+  line-height:1; margin-bottom:4px;
+  text-shadow: 0 2px 4px rgba(27,67,50,0.08);
+}
+.home-title span { font-style:italic; color:var(--emerald-light); font-weight:400; }
+.home-subtitle {
+  font-family:'Playfair Display', serif; font-size:18px; color:var(--text-mid);
+  font-style:italic; margin:8px 0 32px; opacity:0.8;
+}
+.countdown-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+  margin-bottom:40px; width:100%; max-width:360px;
+}
+.countdown-item {
+  background:var(--white); border-radius:var(--radius-sm); padding:16px 8px;
+  box-shadow:var(--shadow);
+}
+.countdown-num {
+  font-family:'Playfair Display',serif; font-size:36px; font-weight:700;
+  color:var(--emerald); line-height:1;
+}
+.countdown-label { font-size:11px; color:var(--text-light); margin-top:4px; text-transform:uppercase; letter-spacing:1px; }
+.home-dates {
+  font-size:14px; color:var(--text-mid); margin-bottom:16px;
+  background:var(--white); padding:10px 20px; border-radius:40px;
+  box-shadow:var(--shadow); font-weight:500;
+}
+.home-dates i { color:var(--gold); margin-right:6px; }
+.home-route {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+  margin-top:8px; max-width:380px;
+}
+.home-route span {
+  font-size:11px; background:var(--emerald-dark); color:var(--gold-light);
+  padding:5px 12px; border-radius:20px; font-weight:500; letter-spacing:0.5px;
+}
+
+/* MAP SCREEN */
+#map-container { height:calc(100vh - var(--nav-height)); width:100%; position:relative; }
+#map { height:100%; width:100%; }
+.leaflet-popup-content-wrapper { border-radius:var(--radius-sm)!important; box-shadow:var(--shadow-lg)!important; }
+.leaflet-popup-content { font-family:'DM Sans',sans-serif!important; margin:12px 16px!important; }
+.popup-title { font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--emerald-dark); margin-bottom:4px; }
+.popup-zone { font-size:11px; color:var(--text-light); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.popup-desc { font-size:13px; color:var(--text-mid); line-height:1.5; margin-bottom:10px; }
+.popup-nav {
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--emerald); color:white; padding:8px 14px;
+  border-radius:8px; font-size:12px; font-weight:600;
+  text-decoration:none; transition:background .2s;
+}
+.popup-nav:hover { background:var(--emerald-dark); color:white; }
+.map-legend {
+  position:absolute; bottom:16px; left:16px; right:16px; z-index:800;
+  background:var(--white); border-radius:var(--radius-sm); padding:12px 16px;
+  box-shadow:var(--shadow-lg); display:flex; flex-wrap:wrap; gap:10px;
+  font-size:11px;
+}
+.legend-item { display:flex; align-items:center; gap:5px; }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ITINERARY SCREEN */
+.itinerary-screen { padding:20px 16px calc(var(--nav-height) + 20px); }
+.itin-header {
+  text-align:center; margin-bottom:24px; padding:20px;
+  background: linear-gradient(135deg, var(--emerald-dark), var(--emerald));
+  border-radius:var(--radius); color:var(--white);
+}
+.itin-header h2 { font-size:28px; margin-bottom:4px; }
+.itin-header p { opacity:0.8; font-size:13px; }
+.day-card {
+  background:var(--white); border-radius:var(--radius); margin-bottom:16px;
+  box-shadow:var(--shadow); overflow:hidden; transition:all .3s;
+}
+.day-card-header {
+  padding:16px 18px; cursor:pointer; display:flex; align-items:center; gap:14px;
+  transition: background .2s;
+}
+.day-card-header:active { background:var(--beige); }
+.day-num {
+  width:44px; height:44px; border-radius:12px; display:flex; align-items:center;
+  justify-content:center; font-family:'Playfair Display',serif; font-weight:700;
+  font-size:18px; color:var(--white); flex-shrink:0;
+}
+.day-info { flex:1; }
+.day-info h3 { font-size:16px; color:var(--text-dark); margin-bottom:2px; }
+.day-info p { font-size:12px; color:var(--text-light); }
+.day-chevron { color:var(--text-light); transition:transform .3s; font-size:14px; }
+.day-card.open .day-chevron { transform:rotate(180deg); }
+.day-content { padding:0 18px; max-height:0; overflow:hidden; transition:max-height .4s ease; }
+.day-card.open .day-content { max-height:2000px; padding-bottom:18px; }
+.time-block { margin-top:14px; }
+.time-label {
+  font-size:11px; text-transform:uppercase; letter-spacing:1.5px; font-weight:600;
+  color:var(--emerald); margin-bottom:8px; display:flex; align-items:center; gap:6px;
+}
+.time-label i { font-size:13px; }
+.activity-item {
+  background:var(--beige); border-radius:var(--radius-sm); padding:12px 14px;
+  margin-bottom:8px; font-size:13px; line-height:1.6; color:var(--text-mid);
+  border-left:3px solid var(--gold);
+  white-space:pre-line;
+}
+.activity-item .act-nav {
+  display:inline-flex; align-items:center; gap:4px; margin-top:8px;
+  background:var(--emerald); color:white; padding:6px 10px; border-radius:6px;
+  font-size:11px; font-weight:600; text-decoration:none; cursor:pointer;
+}
+
+/* CHECKLIST SCREEN */
+.checklist-screen { padding:20px 16px calc(var(--nav-height) + 20px); }
+.check-header {
+  text-align:center; margin-bottom:20px; padding:20px;
+  background:linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius:var(--radius); color:var(--text-dark);
+}
+.check-header h2 { font-size:28px; margin-bottom:4px; }
+.check-progress {
+  margin:16px 0 8px; height:8px; background:rgba(255,255,255,0.5);
+  border-radius:10px; overflow:hidden;
+}
+.check-progress-bar { height:100%; background:var(--emerald); border-radius:10px; transition:width .4s; }
+.check-progress-text { font-size:13px; font-weight:600; }
+.check-category {
+  background:var(--white); border-radius:var(--radius); margin-bottom:12px;
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.check-cat-header {
+  padding:14px 16px; display:flex; align-items:center; gap:10px;
+  cursor:pointer; font-weight:600; font-size:14px;
+}
+.check-cat-header i { color:var(--emerald); font-size:16px; }
+.check-cat-header .cat-count { margin-left:auto; font-size:12px; color:var(--text-light); font-weight:400; }
+.check-cat-header .cat-chevron { color:var(--text-light); font-size:12px; transition:transform .3s; }
+.check-category.open .cat-chevron { transform:rotate(180deg); }
+.check-items { max-height:0; overflow:hidden; transition:max-height .4s; padding:0 16px; }
+.check-category.open .check-items { max-height:1000px; padding-bottom:12px; }
+.check-item {
+  display:flex; align-items:center; gap:10px; padding:10px 0;
+  border-bottom:1px solid var(--beige-dark); cursor:pointer; font-size:14px;
+}
+.check-item:last-child { border-bottom:none; }
+.check-box {
+  width:22px; height:22px; border:2px solid var(--beige-dark); border-radius:6px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:all .2s; font-size:12px; color:transparent;
+}
+.check-item.done .check-box { background:var(--emerald); border-color:var(--emerald); color:white; }
+.check-item.done .check-text { text-decoration:line-through; color:var(--text-light); }
+
+/* EMERGENCY SCREEN */
+.emergency-screen { padding:20px 16px calc(var(--nav-height) + 20px); }
+.emerg-header {
+  text-align:center; margin-bottom:20px; padding:20px;
+  background:linear-gradient(135deg, #C0392B, #E74C3C);
+  border-radius:var(--radius); color:var(--white);
+}
+.emerg-header h2 { font-size:28px; margin-bottom:4px; }
+.emerg-card {
+  background:var(--white); border-radius:var(--radius); padding:18px;
+  margin-bottom:12px; box-shadow:var(--shadow);
+  display:flex; align-items:flex-start; gap:14px;
+}
+.emerg-icon {
+  width:42px; height:42px; border-radius:12px; display:flex; align-items:center;
+  justify-content:center; font-size:18px; flex-shrink:0;
+}
+.emerg-info h4 { font-size:15px; margin-bottom:4px; }
+.emerg-info p { font-size:13px; color:var(--text-mid); line-height:1.5; }
+.emerg-info a { color:var(--emerald); font-weight:600; text-decoration:none; }
+.emerg-tip {
+  background:var(--sand); border-radius:var(--radius-sm); padding:14px;
+  margin-bottom:10px; font-size:13px; color:var(--text-mid); line-height:1.6;
+}
+.emerg-tip strong { color:var(--text-dark); }
+
+/* Scroll styling */
+.screen::-webkit-scrollbar { width:4px; }
+.screen::-webkit-scrollbar-track { background:transparent; }
+.screen::-webkit-scrollbar-thumb { background:var(--beige-dark); border-radius:4px; }
+
+/* Animations */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.fade-up { animation:fadeUp .6s ease forwards; }
+.fade-up-d1 { animation-delay:.1s; opacity:0; }
+.fade-up-d2 { animation-delay:.2s; opacity:0; }
+.fade-up-d3 { animation-delay:.3s; opacity:0; }
+.fade-up-d4 { animation-delay:.4s; opacity:0; }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen home-screen active">
+  <div class="home-hero">
+    <div class="home-ornament fade-up">✦ Aventura ✦</div>
+    <h1 class="home-title fade-up fade-up-d1">B<span>ali</span></h1>
+    <p class="home-subtitle fade-up fade-up-d2">Martí & Hugo · Abril 2026</p>
+    <div class="countdown-grid fade-up fade-up-d3">
+      <div class="countdown-item"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">Días</div></div>
+      <div class="countdown-item"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">Horas</div></div>
+      <div class="countdown-item"><div class="countdown-num" id="cd-mins">--</div><div class="countdown-label">Min</div></div>
+      <div class="countdown-item"><div class="countdown-num" id="cd-secs">--</div><div class="countdown-label">Seg</div></div>
+    </div>
+    <div class="home-dates fade-up fade-up-d4">
+      <i class="fa-solid fa-plane-departure"></i> 15 Abril — 29 Abril · 15 días
+    </div>
+    <div class="home-route fade-up fade-up-d4">
+      <span>Canggu</span><span>Ubud</span><span>Nusa</span><span>Gili T</span><span>Uluwatu</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div id="screen-map" class="screen">
+  <div id="map-container">
+    <div id="map"></div>
+    <div class="map-legend" id="map-legend"></div>
+  </div>
+</div>
+
+<!-- ITINERARY -->
+<div id="screen-itinerary" class="screen itinerary-screen">
+  <div class="itin-header">
+    <h2>Itinerario</h2>
+    <p>15 días · 5 bases · Infinitas aventuras</p>
+  </div>
+  <div id="itin-list"></div>
+</div>
+
+<!-- CHECKLIST -->
+<div id="screen-checklist" class="screen checklist-screen">
+  <div class="check-header">
+    <h2>Checklist</h2>
+    <p>¿Lo tienes todo?</p>
+    <div class="check-progress"><div class="check-progress-bar" id="progress-bar"></div></div>
+    <div class="check-progress-text" id="progress-text">0 / 0</div>
+  </div>
+  <div id="check-list"></div>
+</div>
+
+<!-- EMERGENCIES -->
+<div id="screen-emergency" class="screen emergency-screen">
+  <div class="emerg-header">
+    <h2>Emergencias</h2>
+    <p>Info esencial por si acaso</p>
+  </div>
+  <div id="emerg-list"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-item active" data-screen="home"><i class="fa-solid fa-house"></i><span>Inicio</span></div>
+  <div class="nav-item" data-screen="map"><i class="fa-solid fa-map-location-dot"></i><span>Mapa</span></div>
+  <div class="nav-item" data-screen="itinerary"><i class="fa-solid fa-calendar-days"></i><span>Itinerario</span></div>
+  <div class="nav-item" data-screen="checklist"><i class="fa-solid fa-clipboard-check"></i><span>Checklist</span></div>
+  <div class="nav-item" data-screen="emergency"><i class="fa-solid fa-kit-medical"></i><span>SOS</span></div>
+</nav>
+
+<script>
+// ====================== DATA ======================
+const TRIP_START = new Date('2026-04-15T00:00:00');
+
+const ZONES = [
+  { id:'canggu', name:'Canggu', color:'#2D6A4F', dates:'16–19 Abr', lat:-8.6478, lng:115.1385 },
+  { id:'ubud', name:'Ubud', color:'#7B2D8B', dates:'20 Abr', lat:-8.5069, lng:115.2625 },
+  { id:'nusa', name:'Nusa Penida', color:'#C0392B', dates:'21–22 Abr', lat:-8.7275, lng:115.5444 },
+  { id:'gili', name:'Gili Trawangan', color:'#2980B9', dates:'23–25 Abr', lat:-8.3510, lng:116.0345 },
+  { id:'uluwatu', name:'Uluwatu', color:'#D4A017', dates:'26–28 Abr', lat:-8.8291, lng:115.0849 },
+];
+
+const DAYS = [
+  {
+    day:1, date:'15 Abr', weekday:'Miércoles', zone:'travel', title:'Vuelo a Bali',
+    color:'#6C757D',
+    slots: {
+      manana: ['Vuelo de 18 horas ✈️ ¡Empieza la aventura!'],
+    }
+  },
+  {
+    day:2, date:'16 Abr', weekday:'Jueves', zone:'canggu', title:'Llegada a Canggu',
+    color:'#2D6A4F',
+    slots: {
+      manana: ['Check-in + dejar maletas en el alojamiento'],
+      mediodia: ['Paseo a pie por Batu Bolong (mil cafés y tiendas)'],
+      tarde: ['Sunset en Batu Bolong Beach (ambiente) o Nelayan Beach (más tranquilo, 5 min)'],
+      noche: ["Old Man's (clásico social frente al mar) + Cena"],
+    }
+  },
+  {
+    day:3, date:'17 Abr', weekday:'Viernes', zone:'canggu', title:'Playas Canggu',
+    color:'#2D6A4F',
+    slots: {
+      manana: ['Pererenan Beach → más chill y bonita', 'Seseh Beach → aún más tranquila'],
+      tarde: ['Volver al hotel/piscina + ducha', 'Volved a Batu Bolong al atardecer (más ambiente)'],
+      noche: ['FIESTUKI 🎉'],
+    }
+  },
+  {
+    day:4, date:'18 Abr', weekday:'Sábado', zone:'canggu', title:'Berawa + CUBO',
+    color:'#2D6A4F',
+    slots: {
+      manana: ['TRANKI IN THE MORNING ☕'],
+      mediodia: ['Berawa Beach'],
+      tarde: ['CUBO (gigante, espectáculo)\nId temprano para pillar buen sitio y ver el sunset desde piscina/mar'],
+      noche: ['Cena cerca y decidimos'],
+    }
+  },
+  {
+    day:5, date:'19 Abr', weekday:'Domingo', zone:'canggu', title:'Tanah Lot Sunset',
+    color:'#2D6A4F',
+    slots: {
+      manana: ['Playa Pererenan o Seseh'],
+      mediodia: ['Masaje (Canggu: barato y buenísimo) + Piscina relax'],
+      tarde: ['Tanah Lot Sunset\nIR CON MARGEN – Salid sobre 15:30–16:00\nPaseo, fotos y sunset en el templo'],
+      noche: ['Última cena guapa en Batu Bolong + dormir pronto (mañana cambio de base)'],
+    }
+  },
+  {
+    day:6, date:'20 Abr', weekday:'Lunes', zone:'ubud', title:'Ubud: Quads + Cascadas',
+    color:'#7B2D8B',
+    slots: {
+      manana: ['SALIR MUY PRONTO 07:30–08:00\n10:00–10:30 Ruta en quad por barro, túneles y arrozales\nComida y ducha incluidas'],
+      tarde: ['14:15–15:30 Tegenungan Waterfall\n16:15–18:00 Tegallalang Rice Terraces\n18:45 Volver a hotel / ducha / relax'],
+      noche: ['Cenika y a dormir 😴'],
+    }
+  },
+  {
+    day:7, date:'21 Abr', weekday:'Martes', zone:'nusa', title:'Nusa Penida — Llegada',
+    color:'#C0392B',
+    slots: {
+      manana: ['06:30 Despertar\n07:00 Salida de Ubud → Puerto de Sanur (driver)\n08:00–08:30 Llegada al puerto\n09:00 Fast boat a Nusa\n09:30–10:15 Llegada a Nusa'],
+      mediodia: ['Ruta Oeste:\n• Kelingking Viewpoint (solo mirador)\n• Broken Beach\n• Angel\'s Billabong'],
+      tarde: ['Crystal Bay 🌊'],
+      noche: ['Cena cerca del hotel (Toyapakeh tiene buenas opciones)'],
+    }
+  },
+  {
+    day:8, date:'22 Abr', weekday:'Miércoles', zone:'nusa', title:'Nusa Penida — Ruta Este',
+    color:'#C0392B',
+    slots: {
+      manana: ['07:00 Salida con driver\n08:00–11:30 Ruta Este:\n• Diamond Beach\n• Atuh Beach\n• Mirador Thousand Islands'],
+      mediodia: ['12:00–13:00 Comer cerca de la zona Este'],
+      tarde: ['15:00–18:00 Volver al hotel → piscina / relax / siesta'],
+      noche: ['Cena tranquila\nPreparar mochilas para barco Nusa → Gili T'],
+    }
+  },
+  {
+    day:9, date:'23 Abr', weekday:'Jueves', zone:'gili', title:'Gili Trawangan — Llegada',
+    color:'#2980B9',
+    slots: {
+      manana: ['06:30 despertar + desayuno rápido\n07:15 salir del hotel → puerto (Nusa)\n08:00–08:30 estar en el puerto\nBarco mañana → Nusa → Gili T'],
+      mediodia: ['Dejar maletas en hotel y pillar bici 🚲'],
+      tarde: ['Comida sencilla cerca del "main strip"\nPaseo por la isla'],
+      noche: ['Cena en el Night Market (barato y variado)\nSunset bars / música (plan chill-social)\nDormir decente: mañana snorkel'],
+    }
+  },
+  {
+    day:10, date:'24 Abr', weekday:'Viernes', zone:'gili', title:'Gili — Snorkel + Explore',
+    color:'#2980B9',
+    slots: {
+      manana: ['09:30–13:00 Tour snorkel (barco compartido)\n🐢 RESERVAR: Turtle Point'],
+      mediodia: ['Comida + ducha + siesta corta (30–60 min)'],
+      tarde: ['Bici around the island 🚲\nNorth-East beach\nChill playa + "golden hour" sunset West Coast'],
+      noche: ['Salir fuerte por el Main strip (East) 🎉'],
+    }
+  },
+  {
+    day:11, date:'25 Abr', weekday:'Sábado', zone:'gili', title:'Gili — Último día relax',
+    color:'#2980B9',
+    slots: {
+      manana: ['South / South-East: coged bici hacia abajo, más vacío y tranquilo\nSnorkel desde orilla por zona norte; paz total por el sur'],
+      tarde: ['Si queréis "postal": North-East (baño y relax)\nSi queréis "cero gente": South-East'],
+      noche: ['Cena guapa por el Main strip\nA dormir pronto (mañana Uluwatu)'],
+    }
+  },
+  {
+    day:12, date:'26 Abr', weekday:'Domingo', zone:'uluwatu', title:'Uluwatu — Llegada',
+    color:'#D4A017',
+    slots: {
+      manana: ['07:30–08:00 Fast boat desde Gili\n11:00–13:00 Llegada a Bali + driver a Padang Padang/Pecatu'],
+      mediodia: ['14:00 Check-in + comida ligera\n15:30 Descanso / piscina'],
+      tarde: ['16:00–18:30 Padang Padang Beach\nEntrada aprox: IDR 15.000 adulto (cash)'],
+      noche: ['19:30 Cena cerca + dormir bien'],
+    }
+  },
+  {
+    day:13, date:'27 Abr', weekday:'Lunes', zone:'uluwatu', title:'Bingin + Balangan',
+    color:'#D4A017',
+    slots: {
+      manana: ['08:30 Salida\n09:00–11:30 Bingin Beach\nVibe brutal, muy Uluwatu. Bajad con calma (escaleras)'],
+      mediodia: ['12:00–13:30 Comer + descanso (os salva del calor)'],
+      tarde: ['14:30–16:30 Balangan Beach (abierta y fotogénica)\n17:15–19:30 Ulu Cliffhouse o Single Fin para sunset/tardeo'],
+      noche: ['20:30 Cena + copas suaves (guardad energía para el templo mañana)'],
+    }
+  },
+  {
+    day:14, date:'28 Abr', weekday:'Martes', zone:'uluwatu', title:'Uluwatu Temple + Kecak',
+    color:'#D4A017',
+    slots: {
+      manana: ['09:00–11:30 Suluban Beach (Blue Point)\nCuevas/rocas, súper chula'],
+      mediodia: ['12:00–14:30 Masaje + comida + preparar mochila del vuelo'],
+      tarde: ['15:30 Salir hacia Uluwatu Temple\n16:00 Entrada + paseo por el acantilado\n18:00–19:00 Kecak Dance con sunset de fondo 🌅'],
+      noche: ['20:00–21:30 Cena final y a dormir temprano'],
+    }
+  },
+  {
+    day:15, date:'29 Abr', weekday:'Miércoles', zone:'travel', title:'Vuelta a casa',
+    color:'#6C757D',
+    slots: {
+      manana: ['SALIDA ✈️ Hasta la próxima, Bali 🌺'],
+    }
+  },
+];
+
+const MARKERS = [
+  { name:'Batu Bolong Beach', zone:'canggu', lat:-8.6553, lng:115.1312, desc:'Playa principal de Canggu, ambiente, sunset' },
+  { name:'Nelayan Beach', zone:'canggu', lat:-8.6536, lng:115.1279, desc:'Playa más tranquila a 5 min de Batu Bolong' },
+  { name:'Pererenan Beach', zone:'canggu', lat:-8.6530, lng:115.1110, desc:'Más chill y bonita que Batu Bolong' },
+  { name:'Seseh Beach', zone:'canggu', lat:-8.6300, lng:115.0900, desc:'Aún más tranquila, relax total' },
+  { name:'Berawa Beach', zone:'canggu', lat:-8.6610, lng:115.1430, desc:'Playa con buenas olas y ambiente' },
+  { name:'Old Man\'s', zone:'canggu', lat:-8.6548, lng:115.1321, desc:'Bar clásico social frente al mar' },
+  { name:'CUBO Canggu', zone:'canggu', lat:-8.6570, lng:115.1340, desc:'Beach club gigante, espectáculo de sunset' },
+  { name:'Tanah Lot', zone:'canggu', lat:-8.6210, lng:115.0868, desc:'Templo icónico en el mar. Sunset brutal' },
+  { name:'Tegenungan Waterfall', zone:'ubud', lat:-8.5753, lng:115.2890, desc:'Cascada espectacular cerca de Ubud' },
+  { name:'Tegallalang Rice Terraces', zone:'ubud', lat:-8.4312, lng:115.2791, desc:'Terrazas de arroz icónicas' },
+  { name:'Kelingking Viewpoint', zone:'nusa', lat:-8.7526, lng:115.4692, desc:'El mirador más famoso de Nusa Penida' },
+  { name:'Broken Beach', zone:'nusa', lat:-8.7466, lng:115.4549, desc:'Formación natural circular impresionante' },
+  { name:"Angel's Billabong", zone:'nusa', lat:-8.7473, lng:115.4568, desc:'Piscina natural al borde del acantilado' },
+  { name:'Crystal Bay', zone:'nusa', lat:-8.7168, lng:115.4633, desc:'Playa de arena blanca con snorkel' },
+  { name:'Diamond Beach', zone:'nusa', lat:-8.7620, lng:115.6160, desc:'Playa paradisíaca al este de Nusa' },
+  { name:'Atuh Beach', zone:'nusa', lat:-8.7620, lng:115.6100, desc:'Playa espectacular junto a Diamond Beach' },
+  { name:'Thousand Islands Viewpoint', zone:'nusa', lat:-8.7550, lng:115.6070, desc:'Mirador con vistas a los islotes' },
+  { name:'Gili Trawangan Harbor', zone:'gili', lat:-8.3525, lng:116.0355, desc:'Puerto de llegada a Gili T' },
+  { name:'Gili T Night Market', zone:'gili', lat:-8.3510, lng:116.0380, desc:'Mercado nocturno: comida barata y variada' },
+  { name:'Turtle Point (Snorkel)', zone:'gili', lat:-8.3460, lng:116.0290, desc:'Punto de snorkel con tortugas 🐢' },
+  { name:'Padang Padang Beach', zone:'uluwatu', lat:-8.8149, lng:115.0986, desc:'Playa icónica de Uluwatu (IDR 15k entrada)' },
+  { name:'Bingin Beach', zone:'uluwatu', lat:-8.8090, lng:115.1010, desc:'Vibe brutal, Uluwatu puro. Escaleras para bajar' },
+  { name:'Suluban Beach (Blue Point)', zone:'uluwatu', lat:-8.8073, lng:115.0896, desc:'Cuevas y rocas, súper chula' },
+  { name:'Balangan Beach', zone:'uluwatu', lat:-8.7920, lng:115.1120, desc:'Playa abierta y muy fotogénica' },
+  { name:'Uluwatu Temple', zone:'uluwatu', lat:-8.8291, lng:115.0849, desc:'Templo en acantilado + Kecak Dance al sunset' },
+  { name:'Single Fin Bali', zone:'uluwatu', lat:-8.8073, lng:115.0920, desc:'Bar de sunset/tardeo con vistas al mar' },
+];
+
+const CHECKLIST = {
+  'Documentos': {icon:'fa-passport', items:['Pasaporte (vigente 6+ meses)','Copia digital pasaporte','Seguro de viaje (impreso + digital)','Confirmación vuelos','Reservas alojamiento','Carnet de conducir internacional','Tarjetas bancarias (mínimo 2)','Efectivo (USD o EUR para cambiar)']},
+  'Ropa': {icon:'fa-shirt', items:['Bañadores (×3)','Camisetas ligeras','Pantalones cortos','Vestido/ropa para cenar','Sudadera fina (templos/avión)','Ropa interior','Calcetines finos','Chanclas','Zapatillas cómodas (quads/trekking)','Sombrero/gorra']},
+  'Higiene y Salud': {icon:'fa-pump-medical', items:['Protector solar SPF50+','After sun / aloe vera','Repelente mosquitos (DEET)','Botiquín básico (ibuprofeno, paracetamol)','Antidiarreicos','Tiritas','Gel hidroalcohólico','Cepillo + pasta dientes','Desodorante','Champú/gel viaje']},
+  'Electrónica': {icon:'fa-plug', items:['Móvil + cargador','Power bank (cargada)','Adaptador enchufe (tipo C/G)','Cámara + tarjeta SD','Auriculares','E-reader / tablet']},
+  'Extras Bali': {icon:'fa-sun', items:['Bolsa seca (playa/barco)','Gafas de sol','Máscara snorkel (o alquilar allí)','Candado mochila','Riñonera/bolsa cruzada','Pareo/toalla microfibra','Cangrejeras/escarpines (rocas)','Bolsas ziplock (móvil/dinero)']},
+  'Preparativos': {icon:'fa-list-check', items:['Reservar fast boats (Sanur→Nusa, Nusa→Gili, Gili→Bali)','Reservar tour snorkel Gili T','Reservar quad Ubud','Reservar drivers (Ubud, Nusa Penida)','Comprar eSIM o SIM local','Descargar offline maps (Maps.me)','Avisar al banco del viaje','Cambiar dinero a IDR','Comprar entrada Uluwatu Temple + Kecak (~150k IDR)']},
+};
+
+const EMERGENCY = [
+  {icon:'fa-phone-volume', color:'#C0392B', bg:'#FDEDEC', title:'Emergencias Indonesia', text:'Policía: <a href="tel:110">110</a>\nAmbulancia: <a href="tel:118">118</a> / <a href="tel:119">119</a>\nBomberos: <a href="tel:113">113</a>'},
+  {icon:'fa-hospital', color:'#2980B9', bg:'#EBF5FB', title:'Hospital más cercano', text:'BIMC Hospital Kuta\n<a href="tel:+62361761263">+62 361 761 263</a>\nAbierto 24h, hablan inglés'},
+  {icon:'fa-building-columns', color:'#2D6A4F', bg:'#EAFAF1', title:'Embajada de España', text:'Embajada en Yakarta\n<a href="tel:+622131935180">+62 21 3193 5180</a>\nEmergencia consular: <a href="tel:+622131935180">+62 21 3193 5180</a>'},
+  {icon:'fa-shield-halved', color:'#7B2D8B', bg:'#F4ECF7', title:'Seguro de Viaje', text:'Lleva siempre el número de tu aseguradora y nº de póliza.\nGuarda una copia en el móvil y otra en el email.'},
+  {icon:'fa-money-bill', color:'#D4A017', bg:'#FEF9E7', title:'Dinero y pagos', text:'Moneda: Rupia Indonesia (IDR)\n1 EUR ≈ 17.000–18.000 IDR\nLleva cash para templos, parking, mercados.\nCajeros: busca BCA, Mandiri, BNI (menos comisión).'},
+  {icon:'fa-triangle-exclamation', color:'#E67E22', bg:'#FDF2E9', title:'Tips de seguridad', text:'Cuidado con los monos en Uluwatu (gafas, móvil).\nNo beber agua del grifo.\nRegatear con humor (empezar 30-40% del precio).\nLlevar cash pequeño para propinas.\nGuardar copias digitales de todo en la nube.'},
+];
+
+// ====================== APP LOGIC ======================
+let map = null;
+let mapInitialized = false;
+
+// Navigation
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const screen = item.dataset.screen;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('screen-' + screen).classList.add('active');
+    item.classList.add('active');
+    if (screen === 'map' && !mapInitialized) initMap();
+    if (screen === 'map' && map) setTimeout(() => map.invalidateSize(), 100);
+  });
+});
+
+// Countdown
+function updateCountdown() {
+  const now = new Date();
+  const diff = TRIP_START - now;
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '🌴';
+    document.getElementById('cd-hours').textContent = '🌊';
+    document.getElementById('cd-mins').textContent = '🌺';
+    document.getElementById('cd-secs').textContent = '🔥';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent = d;
+  document.getElementById('cd-hours').textContent = h;
+  document.getElementById('cd-mins').textContent = m;
+  document.getElementById('cd-secs').textContent = s;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// Map
+function initMap() {
+  map = L.map('map', { zoomControl: false }).setView([-8.65, 115.35], 10);
+  L.control.zoom({ position: 'topright' }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  const zoneColors = {};
+  ZONES.forEach(z => zoneColors[z.id] = z.color);
+  zoneColors['travel'] = '#6C757D';
+
+  MARKERS.forEach(m => {
+    const color = zoneColors[m.zone] || '#333';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:28px;height:28px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+        <div style="width:8px;height:8px;background:white;border-radius:50%;"></div>
+      </div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
+    const marker = L.marker([m.lat, m.lng], { icon }).addTo(map);
+    const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}`;
+    marker.bindPopup(`
+      <div class="popup-title">${m.name}</div>
+      <div class="popup-zone">${m.zone}</div>
+      <div class="popup-desc">${m.desc}</div>
+      <a class="popup-nav" href="${navUrl}" target="_blank"><i class="fa-solid fa-diamond-turn-right"></i> Navegar</a>
+    `, { maxWidth: 260 });
+  });
+
+  // Legend
+  const legend = document.getElementById('map-legend');
+  ZONES.forEach(z => {
+    legend.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${z.color}"></div>${z.name}</div>`;
+  });
+  mapInitialized = true;
+}
+
+// Navigate to map marker
+function showOnMap(lat, lng) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-map').classList.add('active');
+  document.querySelector('[data-screen="map"]').classList.add('active');
+  if (!mapInitialized) initMap();
+  setTimeout(() => {
+    map.invalidateSize();
+    map.setView([lat, lng], 15);
+    // Open closest marker popup
+    map.eachLayer(layer => {
+      if (layer instanceof L.Marker) {
+        const ll = layer.getLatLng();
+        if (Math.abs(ll.lat - lat) < 0.005 && Math.abs(ll.lng - lng) < 0.005) {
+          layer.openPopup();
+        }
+      }
+    });
+  }, 150);
+}
+
+// Itinerary
+function buildItinerary() {
+  const container = document.getElementById('itin-list');
+  const timeIcons = { manana:'fa-sun', mediodia:'fa-cloud-sun', tarde:'fa-moon', noche:'fa-star' };
+  const timeLabels = { manana:'Mañana', mediodia:'Mediodía', tarde:'Tarde', noche:'Noche' };
+
+  DAYS.forEach(day => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.innerHTML = `
+      <div class="day-card-header">
+        <div class="day-num" style="background:${day.color}">${day.day}</div>
+        <div class="day-info">
+          <h3>${day.title}</h3>
+          <p>${day.weekday} ${day.date}</p>
+        </div>
+        <i class="fa-solid fa-chevron-down day-chevron"></i>
+      </div>
+      <div class="day-content">
+        ${Object.entries(day.slots).map(([slot, activities]) => `
+          <div class="time-block">
+            <div class="time-label"><i class="fa-solid ${timeIcons[slot]}"></i> ${timeLabels[slot]}</div>
+            ${activities.map(act => {
+              // Find matching marker for nav button
+              let navBtn = '';
+              MARKERS.forEach(m => {
+                const words = m.name.toLowerCase().split(/[\s()]+/);
+                const actLow = act.toLowerCase();
+                if (words.some(w => w.length > 3 && actLow.includes(w))) {
+                  const url = `https://www.google.com/maps/dir/?api=1&destination=${m.lat},${m.lng}`;
+                  navBtn = `<a class="act-nav" onclick="showOnMap(${m.lat},${m.lng});return false;" href="#"><i class="fa-solid fa-map-pin"></i> Ver mapa</a>
+                    <a class="act-nav" href="${url}" target="_blank" style="background:var(--gold);color:var(--text-dark);margin-left:4px;"><i class="fa-solid fa-diamond-turn-right"></i> Navegar</a>`;
+                }
+              });
+              return `<div class="activity-item">${act}${navBtn ? '<div style="margin-top:8px">'+navBtn+'</div>' : ''}</div>`;
+            }).join('')}
+          </div>
+        `).join('')}
+      </div>
+    `;
+    card.querySelector('.day-card-header').addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+    container.appendChild(card);
+  });
+}
+buildItinerary();
+
+// Checklist
+function buildChecklist() {
+  const container = document.getElementById('check-list');
+  const saved = JSON.parse(localStorage.getItem('bali-checklist') || '{}');
+
+  Object.entries(CHECKLIST).forEach(([cat, data]) => {
+    const section = document.createElement('div');
+    section.className = 'check-category';
+    section.innerHTML = `
+      <div class="check-cat-header">
+        <i class="fa-solid ${data.icon}"></i>
+        <span>${cat}</span>
+        <span class="cat-count">${data.items.length}</span>
+        <i class="fa-solid fa-chevron-down cat-chevron"></i>
+      </div>
+      <div class="check-items">
+        ${data.items.map((item, i) => {
+          const key = cat + '-' + i;
+          const done = saved[key] || false;
+          return `<div class="check-item ${done ? 'done' : ''}" data-key="${key}">
+            <div class="check-box"><i class="fa-solid fa-check"></i></div>
+            <span class="check-text">${item}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+    section.querySelector('.check-cat-header').addEventListener('click', () => {
+      section.classList.toggle('open');
+    });
+    section.querySelectorAll('.check-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('done');
+        const key = item.dataset.key;
+        const state = JSON.parse(localStorage.getItem('bali-checklist') || '{}');
+        state[key] = item.classList.contains('done');
+        localStorage.setItem('bali-checklist', JSON.stringify(state));
+        updateProgress();
+      });
+    });
+    container.appendChild(section);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.done').length;
+  const pct = total > 0 ? (done / total * 100) : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${total} — ${Math.round(pct)}%`;
+}
+buildChecklist();
+
+// Emergency
+function buildEmergency() {
+  const container = document.getElementById('emerg-list');
+  EMERGENCY.forEach(e => {
+    container.innerHTML += `
+      <div class="emerg-card">
+        <div class="emerg-icon" style="background:${e.bg};color:${e.color}"><i class="fa-solid ${e.icon}"></i></div>
+        <div class="emerg-info">
+          <h4>${e.title}</h4>
+          <p>${e.text.replace(/\n/g,'<br>')}</p>
+        </div>
+      </div>
+    `;
+  });
+}
+buildEmergency();
+</script>
+</body>
+</html>
